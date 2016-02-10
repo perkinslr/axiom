@@ -1,6 +1,6 @@
 # -*- test-case-name: axiom.test.test_substore -*-
 
-from zope.interface import implements
+from zope.interface import implementer
 
 from twisted.application import service
 
@@ -12,6 +12,7 @@ from axiom.attributes import path, inmemory, reference
 
 from axiom.upgrade import registerUpgrader
 
+@implementer(IPowerupIndirector)
 class SubStore(Item):
 
     schemaVersion = 1
@@ -20,7 +21,6 @@ class SubStore(Item):
     storepath = path()
     substore = inmemory()
 
-    implements(IPowerupIndirector)
 
     def createNew(cls, store, pathSegments):
         """

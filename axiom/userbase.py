@@ -32,7 +32,7 @@ aware that a user's database contains only their own data.
 
 import warnings
 
-from zope.interface import implements, Interface
+from zope.interface import implementer, Interface
 
 from twisted.cred.portal import IRealm
 from twisted.cred.credentials import IUsernamePassword, IUsernameHashedPassword
@@ -84,7 +84,7 @@ class IPreauthCredentials(Interface):
     """
 
 
-
+@implementer(IUsernamePassword, IUsernameHashedPassword)
 class Preauthenticated(object):
     """
     A credentials object of multiple types which has already been authenticated
@@ -93,7 +93,6 @@ class Preauthenticated(object):
     Credentials interfaces methods are implemented to behave as if the correct
     credentials had been supplied.
     """
-    implements(IUsernamePassword, IUsernameHashedPassword)
 
     def __init__(self, username):
         self.username = username
@@ -405,12 +404,12 @@ class SubStoreLoginMixin:
     def makeAvatars(self, domain, username):
         return SubStore.createNew(self.store, ('account', domain, username + '.axiom'))
 
+@implementer(IRealm, ICredentialsChecker)
 class LoginBase:
     """
     I am a database powerup which provides an interface to a collection of
     username/password pairs mapped to user application objects.
     """
-    implements(IRealm, ICredentialsChecker)
 
     credentialInterfaces = (IUsernamePassword, IUsernameHashedPassword)
 
