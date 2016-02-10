@@ -548,7 +548,7 @@ def _childProcTerminated(self, err):
     del self.waitingForProcess
 
 
-class ProcessController(object):
+class ProcessController(object, metaclass=modal.ModalType):
     """
     Stateful class which tracks a Juice connection to a child process.
 
@@ -625,8 +625,6 @@ class ProcessController(object):
     case where process shutdown was explicitly requested via
     stopProcess().
     """
-
-    __metaclass__ = modal.ModalType
 
     initialMode = 'stopped'
     modeAttribute = 'mode'
@@ -959,8 +957,8 @@ class BatchProcessingControllerService(service.Service):
 
         Return a Deferred which fires when the method has been invoked.
         """
-        item = itemMethod.im_self
-        method = itemMethod.im_func.func_name
+        item = itemMethod.__self__
+        method = itemMethod.__func__.__name__
         return self.batchController.getProcess().addCallback(
             CallItemMethod(storepath=item.store.dbdir,
                            storeid=item.storeID,
@@ -1089,13 +1087,13 @@ class BatchProcessingProtocol(JuiceChild):
         # Any service which has encountered an error will have logged it and
         # then stopped.  Prune those here, so that they are noticed as missing
         # below and re-added.
-        for path, svc in self.subStores.items():
+        for path, svc in list(self.subStores.items()):
             if not svc.running:
                 del self.subStores[path]
 
         try:
             paths = set([p.path for p in self.siteStore.query(substore.SubStore).getColumn("storepath")])
-        except eaxiom.SQLError, e:
+        except eaxiom.SQLError as e:
             # Generally, database is locked.
             log.msg("SubStore query failed with SQLError: %r" % (e,))
         except:
@@ -1111,7 +1109,7 @@ class BatchProcessingProtocol(JuiceChild):
             for added in paths - set(self.subStores):
                 try:
                     s = store.Store(added, debug=False)
-                except eaxiom.SQLError, e:
+                except eaxiom.SQLError as e:
                     # Generally, database is locked.
                     log.msg("Opening sub-Store failed with SQLError: %r" % (e,))
                 except:
@@ -1187,7 +1185,7 @@ class BatchProcessingService(service.Service):
                     log.msg("Stepping processor %r (suspended is %r)" % (item, self.suspended))
                 try:
                     itemHasMore = item.store.transact(item.step, style=self.style, skip=self.suspended)
-                except _ProcessingFailure, e:
+                except _ProcessingFailure as e:
                     log.msg("%r failed while processing %r:" % (e.reliableListener, e.workUnit))
                     log.err(e.failure)
                     e.mark()

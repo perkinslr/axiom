@@ -659,10 +659,10 @@ class AggregateComparison:
     def __init__(self, *conditions):
         self.conditions = conditions
         if self.operator is None:
-            raise NotImplementedError, ('%s cannot be used; you want AND or OR.'
+            raise NotImplementedError('%s cannot be used; you want AND or OR.'
                                         % self.__class__.__name__)
         if not conditions:
-            raise ValueError, ('%s condition requires at least one argument'
+            raise ValueError('%s condition requires at least one argument'
                                % self.operator)
 
     def getQuery(self, store):
@@ -894,7 +894,7 @@ class integer(SQLAttribute):
     def infilter(self, pyval, oself, store):
         if pyval is None:
             return None
-        requireType(self, pyval, inttyperepr, int, long)
+        requireType(self, pyval, inttyperepr, int, int)
         if not LARGEST_NEGATIVE <= pyval <= LARGEST_POSITIVE:
             raise ConstraintError(
                 self, inttyperepr, pyval)
@@ -913,7 +913,7 @@ class bytes(SQLAttribute):
     def infilter(self, pyval, oself, store):
         if pyval is None:
             return None
-        if isinstance(pyval, unicode):
+        if isinstance(pyval, str):
             raise ConstraintError(self, "str or other byte buffer", pyval)
         return buffer(pyval)
 
@@ -968,7 +968,7 @@ class text(SQLAttribute):
     def infilter(self, pyval, oself, store):
         if pyval is None:
             return None
-        if not isinstance(pyval, unicode) or u'\0' in pyval:
+        if not isinstance(pyval, str) or '\0' in pyval:
             raise ConstraintError(
                 self, "unicode string without NULL bytes", pyval)
         return pyval
@@ -979,13 +979,13 @@ class text(SQLAttribute):
 
 
 class textlist(text):
-    delimiter = u'\u001f'
+    delimiter = '\u001f'
 
     # Once upon a time, textlist encoded the list in such a way that caused []
     # to be indistinguishable from [u'']. This value is now used as a
     # placeholder at the head of the list, to avoid this problem in a way that
     # is almost completely backwards-compatible with older databases.
-    guard = u'\u0002'
+    guard = '\u0002'
 
     def outfilter(self, dbval, oself):
         unicodeString = super(textlist, self).outfilter(dbval, oself)
@@ -1031,7 +1031,7 @@ class path(text):
     def infilter(self, pyval, oself, store):
         if pyval is None:
             return None
-        mypath = unicode(pyval.path)
+        mypath = str(pyval.path)
         if store is None:
             store = oself.store
         if store is None:
@@ -1281,7 +1281,7 @@ class AbstractFixedPointDecimal(integer):
     def infilter(self, pyval, oself, store):
         if pyval is None:
             return None
-        if isinstance(pyval, (int, long)):
+        if isinstance(pyval, int):
             pyval = Decimal(pyval)
         if isinstance(pyval, Decimal):
             # Python < 2.5.2 compatibility:

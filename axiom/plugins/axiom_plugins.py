@@ -71,13 +71,13 @@ class Upgrade(axiomatic.AxiomaticCommand):
 
         try:
             self.upgradeStore(store)
-            print 'Upgrade complete'
-        except errors.ItemUpgradeError, e:
-            print 'Upgrader error:'
+            print('Upgrade complete')
+        except errors.ItemUpgradeError as e:
+            print('Upgrader error:')
             e.originalFailure.printTraceback(file=sys.stdout)
-            print self.errorMessageFormat % (
+            print(self.errorMessageFormat % (
                 e.oldType.typeName, e.storeID, e.oldType.schemaVersion,
-                e.newType.schemaVersion)
+                e.newType.schemaVersion))
 
 
     def postOptions(self):
@@ -235,15 +235,15 @@ class List(axiomatic.AxiomaticSubCommand):
         acc = None
         for acc in self.store.query(userbase.LoginMethod):
             if acc.domain is None:
-                print acc.localpart,
+                print(acc.localpart, end=' ')
             else:
-                print acc.localpart + '@' + acc.domain,
+                print(acc.localpart + '@' + acc.domain, end=' ')
             if acc.account.disabled:
-                print '[DISABLED]'
+                print('[DISABLED]')
             else:
-                print
+                print()
         if acc is None:
-            print 'No accounts'
+            print('No accounts')
 
 
 

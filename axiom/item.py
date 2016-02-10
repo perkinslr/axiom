@@ -264,7 +264,7 @@ class Empowered(object):
         else:
             forc = self.store.findOrCreate(_PowerupConnector,
                                            item=self,
-                                           interface=unicode(qual(interface)),
+                                           interface=str(qual(interface)),
                                            powerup=powerup)
             forc.priority = priority
 
@@ -294,7 +294,7 @@ class Empowered(object):
         else:
             for cable in self.store.query(_PowerupConnector,
                                           AND(_PowerupConnector.item == self,
-                                              _PowerupConnector.interface == unicode(qual(interface)),
+                                              _PowerupConnector.interface == str(qual(interface)),
                                               _PowerupConnector.powerup == powerup)):
                 cable.deleteFromStore()
                 return
@@ -340,7 +340,7 @@ class Empowered(object):
             yield inMemoryPowerup
         if self.store is None:
             return
-        name = unicode(qual(interface), 'ascii')
+        name = str(qual(interface), 'ascii')
         for cable in self.store.query(
             _PowerupConnector,
             AND(_PowerupConnector.interface == name,
@@ -459,11 +459,8 @@ def allowDeletion(store, tableClass, comparisonFactory):
 
 
 
-class Item(Empowered, slotmachine._Strict):
+class Item(Empowered, slotmachine._Strict, metaclass=MetaItem):
     # Python-Special Attributes
-    __metaclass__ = MetaItem
-
-    # Axiom-Special Attributes
     __dirty__ = inmemory()
     __legacy__ = False
 
@@ -594,7 +591,7 @@ class Item(Empowered, slotmachine._Strict):
                 if name not in kw:
                     kw[name] = attr.computeDefault()
 
-        for k, v in kw.iteritems():
+        for k, v in kw.items():
             setattr(self, k, v)
 
         if tostore != None:
@@ -917,7 +914,7 @@ class Item(Empowered, slotmachine._Strict):
         # XXX no point in caching for every possible combination of attribute
         # values - probably.  check out how prepared statements are used in
         # python sometime.
-        dirty = self.__dirty__.items()
+        dirty = list(self.__dirty__.items())
         if not dirty:
             raise RuntimeError("Non-dirty item trying to generate SQL.")
         dirty.sort()

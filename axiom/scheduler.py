@@ -43,7 +43,7 @@ from axiom.substore import SubStore
 
 VERBOSE = False
 
-SITE_SCHEDULER = u"Site Scheduler"
+SITE_SCHEDULER = "Site Scheduler"
 
 
 class TimedEventFailureLog(Item):
@@ -165,7 +165,7 @@ class SchedulerMixin:
         while workBeingDone and workUnitsPerformed < MAX_WORK_PER_TICK:
             try:
                 workBeingDone = self.store.transact(self._oneTick, now)
-            except _WackyControlFlow, wcf:
+            except _WackyControlFlow as wcf:
                 self.store.transact(wcf.eventObject.handleError, now, wcf.failureObject)
                 log.err(wcf.failureObject)
                 errors += 1

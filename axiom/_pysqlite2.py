@@ -136,7 +136,7 @@ class Cursor(object):
                     while 1:
                         try:
                             return self._cursor.execute(sql, args)
-                        except dbapi2.OperationalError, e:
+                        except dbapi2.OperationalError as e:
                             if e.args[0] == 'database is locked':
                                 now = self.time()
                                 if self.timeout is not None:
@@ -155,13 +155,13 @@ class Cursor(object):
                     log.msg(interface=iaxiom.IStatEvent,
                             stat_cursor_execute_time=txntime,
                             stat_cursor_blocked_time=blockedTime)
-            except dbapi2.OperationalError, e:
+            except dbapi2.OperationalError as e:
                 if e.args[0] == 'database schema has changed':
                     return self._cursor.execute(sql, args)
                 raise
         except (dbapi2.ProgrammingError,
                 dbapi2.InterfaceError,
-                dbapi2.OperationalError), e:
+                dbapi2.OperationalError) as e:
             raise self._connection.identifySQLError(sql, args, e)
 
 

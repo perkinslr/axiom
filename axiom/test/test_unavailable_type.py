@@ -1,4 +1,5 @@
 from twisted.trial.unittest import TestCase
+import imp
 
 class UnavailableTypeTestCase(TestCase):
     def testUnavailable(self):
@@ -19,8 +20,8 @@ class UnavailableTypeTestCase(TestCase):
         theStore = store.Store(storedir)
         makeItem()(store=theStore)
 
-        item = reload(item)
-        store = reload(store)
+        item = imp.reload(item)
+        store = imp.reload(store)
 
         store.Store(storedir)
 

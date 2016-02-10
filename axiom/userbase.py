@@ -48,7 +48,7 @@ from axiom.errors import (
 from axiom.scheduler import IScheduler
 from axiom import upgrade, iaxiom
 
-ANY_PROTOCOL = u'*'
+ANY_PROTOCOL = '*'
 
 def dflip(x):
     warnings.warn("Don't use dflip no more", stacklevel=2)
@@ -383,7 +383,7 @@ def upgradeLoginAccount1To2(oldAccount):
             localpart=oldAccount.username,
             domain=oldAccount.domain,
             internal=False,
-            protocol=u'email',
+            protocol='email',
             account=acc,
             verified=True)
 
@@ -429,7 +429,7 @@ class LoginBase:
             return account
 
     def addAccount(self, username, domain, password, avatars=None,
-                   protocol=u'email', disabled=0, internal=False,
+                   protocol='email', disabled=0, internal=False,
                    verified=True):
         """
         Create a user account, add it to this LoginBase, and return it.
@@ -461,11 +461,11 @@ class LoginBase:
 
         # unicode(None) == u'None', kids.
         if username is not None:
-            username = unicode(username)
+            username = str(username)
         if domain is not None:
-            domain = unicode(domain)
+            domain = str(domain)
         if password is not None:
-            password = unicode(password)
+            password = str(password)
 
         if self.accountByAddress(username, domain) is not None:
             raise DuplicateUser(username, domain)
@@ -522,8 +522,8 @@ class LoginBase:
             self.failedLogins += 1
             raise MissingDomainPart(credentials.username)
 
-        username = unicode(username)
-        domain = unicode(domain)
+        username = str(username)
+        domain = str(domain)
 
         acct = self.accountByAddress(username, domain)
         if acct is not None:
@@ -552,7 +552,7 @@ def getLoginMethods(store, protocol=None):
     them by protocol
     """
     if protocol is not None:
-        comp = OR(LoginMethod.protocol == u'*',
+        comp = OR(LoginMethod.protocol == '*',
                   LoginMethod.protocol == protocol)
     else:
         comp = None

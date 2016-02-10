@@ -21,7 +21,7 @@ class AxiomaticSubCommandMixin(object):
         """Turn a byte string from the command line into a unicode string.
         """
         codec = getattr(sys.stdin, 'encoding', None) or sys.getdefaultencoding()
-        return unicode(cmdline, codec)
+        return str(cmdline, codec)
 
 
 
@@ -45,14 +45,13 @@ class AxiomaticSubCommand(usage.Options, AxiomaticSubCommandMixin):
 
 
 
-class AxiomaticCommand(usage.Options, AxiomaticSubCommandMixin):
+class AxiomaticCommand(usage.Options, AxiomaticSubCommandMixin, metaclass=_AxiomaticCommandMeta):
     """
     L{twisted.python.usage.Options} subclass for Axiomatic plugin commands.
 
     Subclass this to have your class automatically provide the necessary
     interfaces to be picked up by axiomatic.
     """
-    __metaclass__ = _AxiomaticCommandMeta
 
 noLongerProvides(AxiomaticCommand, IPlugin)
 noLongerProvides(AxiomaticCommand, IAxiomaticCommand)
@@ -72,7 +71,7 @@ class PIDMixin:
     def signalServer(self, signal):
         try:
             return self._sendSignal(signal)
-        except (OSError, IOError), e:
+        except (OSError, IOError) as e:
             if e.errno in (errno.ENOENT, errno.ESRCH):
                 raise usage.UsageError('There is no server running from the Axiom database %r.' % (self.parent.getStoreDirectory(),))
             else:
@@ -89,7 +88,7 @@ class Status(usage.Options, PIDMixin):
     def postOptions(self):
         dbdir = self.parent.getStoreDirectory()
         serverpid = self.signalServer(0)
-        print 'A server is running from the Axiom database %r, PID %d.' % (dbdir, serverpid)
+        print('A server is running from the Axiom database %r, PID %d.' % (dbdir, serverpid))
 
 
 
@@ -176,7 +175,7 @@ class Options(usage.Options):
     store = None
 
     def usedb(self, potentialdb):
-        yn = raw_input("Use database %r? (Y/n) " % (potentialdb,))
+        yn = input("Use database %r? (Y/n) " % (potentialdb,))
         if yn.lower() in ('y', 'yes', ''):
             self['dbdir'] = potentialdb
         else:
@@ -211,5 +210,5 @@ def main(argv=None):
     o = Options()
     try:
         o.parseOptions(argv)
-    except usage.UsageError, e:
+    except usage.UsageError as e:
         raise SystemExit(str(e))

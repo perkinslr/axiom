@@ -26,7 +26,7 @@ class SubStore(Item):
         """
         Create a new SubStore, allocating a new file space for it.
         """
-        if isinstance(pathSegments, basestring):
+        if isinstance(pathSegments, str):
             raise ValueError(
                 'Received %r instead of a sequence' % (pathSegments,))
         if store.dbdir is None:

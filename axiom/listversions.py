@@ -19,7 +19,7 @@ class ListVersions(usage.Options, axiomatic.AxiomaticSubCommandMixin):
 
     def postOptions(self):
         for line in listVersionHistory(self.parent.getStore()):
-            print line
+            print(line)
 
 
 
@@ -95,8 +95,8 @@ def makeSoftwareVersion(store, version, systemVersion):
     """
     return store.findOrCreate(SoftwareVersion,
                               systemVersion=systemVersion,
-                              package=unicode(version.package),
-                              version=unicode(version.short()),
+                              package=str(version.package),
+                              version=str(version.short()),
                               major=version.major,
                               minor=version.minor,
                               micro=version.micro)
@@ -138,5 +138,5 @@ def checkSystemVersion(s, versions=None):
 
     if mostRecentVersionMap != currentVersionMap:
         currentSystemVersion = SystemVersion(store=s, creation=Time())
-        for v in currentVersionMap.itervalues():
+        for v in currentVersionMap.values():
             makeSoftwareVersion(s, v, currentSystemVersion)
