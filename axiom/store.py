@@ -9,6 +9,8 @@ hotfix.require('twisted', 'filepath_copyTo')
 
 import time, os, itertools, warnings, sys, operator, weakref
 
+from _io import FileIO as file
+
 from zope.interface import implementer
 
 from twisted.python import log
