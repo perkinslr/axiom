@@ -529,7 +529,6 @@ class TwoAttributeComparison:
 
 @implementer(IComparison)
 class AttributeValueComparison:
-    implements(IComparison)
     def __init__(self, attribute, operationString, value):
         self.attribute = attribute
         self.operationString = operationString
@@ -552,7 +551,6 @@ class AttributeValueComparison:
 
 @implementer(IComparison)
 class NullComparison:
-    implements(IComparison)
     def __init__(self, attribute, negate=False):
         self.attribute = attribute
         self.negate = negate
@@ -607,7 +605,6 @@ class LikeColumn(LikeFragment):
 
 @implementer(IComparison)
 class LikeComparison:
-    implements(IComparison)
     # Not AggregateComparison or AttributeValueComparison because there is a
     # different, optimized syntax for 'or'.  WTF is wrong with you, SQL??
 
@@ -650,7 +647,6 @@ class AggregateComparison:
     comparisons - currently only used for AND and OR comparisons.
     """
 
-    implements(IComparison)
     operator = None
 
     def __init__(self, *conditions):
@@ -687,7 +683,6 @@ class AggregateComparison:
 
 @implementer(IComparison)
 class SequenceComparison:
-    implements(IComparison)
 
     def __init__(self, attribute, container, negate):
         self.attribute = attribute
@@ -797,7 +792,6 @@ class TableOrderComparisonWrapper(object):
     Wrap any other L{IComparison} and override its L{getInvolvedTables} method
     to specify the same tables but in an explicitly specified order.
     """
-    implements(IComparison)
 
     tables = None
     comparison = None
