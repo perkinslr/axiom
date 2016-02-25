@@ -478,6 +478,7 @@ class SQLAttribute(inmemory, Comparable):
         @param pyval: The value to be converted.
         @return: A value legal for this column in the database.
         """
+        
         # convert to dbval later, I guess?
         if pyval is None and not self.allowNone:
             raise TypeError("attribute [%s.%s = %s()] must not be None" % (
@@ -487,6 +488,10 @@ class SQLAttribute(inmemory, Comparable):
 
     def __set__(self, oself, pyval):
         st = oself.store
+        try:
+            pyval = self.coercer(pyval)
+        except NotImplementedError:
+            pass
 
         dbval = self._convertPyval(oself, pyval)
         oself.__dirty__[self.attrname] = self, dbval

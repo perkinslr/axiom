@@ -12,6 +12,7 @@ from axiom.attributes import path, inmemory, reference
 
 from axiom.upgrade import registerUpgrader
 
+
 @implementer(IPowerupIndirector)
 class SubStore(Item):
 
