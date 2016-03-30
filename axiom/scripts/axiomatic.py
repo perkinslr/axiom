@@ -64,7 +64,7 @@ class PIDMixin:
         if platform.isWindows():
             raise usage.UsageError("You can't send signals on Windows (XXX TODO)")
         dbdir = self.parent.getStoreDirectory()
-        serverpid = int(file(os.path.join(dbdir, 'run', 'axiomatic.pid')).read())
+        serverpid = int(open(os.path.join(dbdir, 'run', 'axiomatic.pid')).read())
         os.kill(serverpid, signal)
         return serverpid
 
