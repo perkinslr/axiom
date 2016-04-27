@@ -206,7 +206,12 @@ class Empowered(object):
 
         @param interface: a zope interface
         """
-        self._inMemoryPowerups[interface] = powerup
+        powerups = self._inMemoryPowerups.get(interface, None)
+        if powerups is None:
+            self._inMemoryPowerups[interface] = [powerup]
+        else:
+            powerups.append(powerup)
+
 
 
     def powerUp(self, powerup, interface=None, priority=0):
@@ -335,8 +340,8 @@ class Empowered(object):
         powerupsFor iteration, during an upgrader, or previously, will not be
         returned.
         """
-        inMemoryPowerup = self._inMemoryPowerups.get(interface, None)
-        if inMemoryPowerup is not None:
+        inMemoryPowerup = self._inMemoryPowerups.get(interface, [])
+        for pup in inMemoryPowerup:
             yield inMemoryPowerup
         if self.store is None:
             return
