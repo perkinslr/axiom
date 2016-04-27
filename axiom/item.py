@@ -342,7 +342,7 @@ class Empowered(object):
         """
         inMemoryPowerup = self._inMemoryPowerups.get(interface, [])
         for pup in inMemoryPowerup:
-            yield inMemoryPowerup
+            yield pup
         if self.store is None:
             return
         name = qual(interface)
