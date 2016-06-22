@@ -10,6 +10,11 @@ try:
     import readline
 except ImportError:
     readline = None
+    
+try:
+    from ptpython.repl import embed
+except:
+    embed = None
 
 from zope.interface import directlyProvides
 
@@ -120,16 +125,18 @@ class Browse(axiomatic.AxiomaticCommand):
         ]
 
     def postOptions(self):
-        interp = code.InteractiveConsole(self.namespace(), '<axiom browser>')
         historyFile = os.path.expanduser(self['history-file'])
-        if readline is not None and os.path.exists(historyFile):
-            readline.read_history_file(historyFile)
-        try:
-            interp.interact("%s.  Autocommit is off." % (str(axiom.version),))
-        finally:
-            if readline is not None:
-                readline.write_history_file(historyFile)
-
+        if not embed:
+            interp = code.InteractiveConsole(self.namespace(), '<axiom browser>')
+            if readline is not None and os.path.exists(historyFile):
+                readline.read_history_file(historyFile)
+            try:
+                interp.interact("%s.  Autocommit is off." % (str(axiom.version),))
+            finally:
+                if readline is not None:
+                    readline.write_history_file(historyFile)
+        else:
+            embed(self.namespace(), None, None, False, historyFile, '<axiom browser>')
 
     def namespace(self):
         """
