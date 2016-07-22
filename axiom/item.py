@@ -330,7 +330,7 @@ class Empowered(object):
         for pup in pups:
             return pup  # return first one, or None if no powerups
 
-    def powerupsFor(self, interface):
+    def powerupsFor(self, interface, tables=(), comparison=None):
         """
         Returns powerups installed using C{powerUp}, in order of descending
         priority.
@@ -339,9 +339,8 @@ class Empowered(object):
         powerupsFor iteration, during an upgrader, or previously, will not be
         returned.
         """
-        return self.filteredPowerupsFor(interface, (), AND())
-
-    def filteredPowerupsFor(self, interface, tables, comparison):
+        if comparison is None:
+            comparison = AND()
         inMemoryPowerup = self._inMemoryPowerups.get(interface, [])
         for pup in inMemoryPowerup:
             yield pup
