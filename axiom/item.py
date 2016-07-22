@@ -357,11 +357,14 @@ class Empowered(object):
                              _PowerupConnector.item == self,
                              )
 
-
-        for entries in self.store.query(
+        q = self.store.query(
             tables,
             comparison,
-            sort=_PowerupConnector.priority.descending):
+            sort=_PowerupConnector.priority.descending
+        ).distinct()
+
+
+        for entries in q:
             cable = entries[0]
             pup = cable.powerup
             if pup is None:
