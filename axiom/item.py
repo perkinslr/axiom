@@ -330,7 +330,6 @@ class Empowered(object):
         for pup in pups:
             return pup  # return first one, or None if no powerups
 
-
     def powerupsFor(self, interface):
         """
         Returns powerups installed using C{powerUp}, in order of descending
@@ -340,17 +339,28 @@ class Empowered(object):
         powerupsFor iteration, during an upgrader, or previously, will not be
         returned.
         """
+        return self.filteredPowerupsFor(interface, (), AND())
+
+    def filteredPowerupsFor(self, interface, tables, comparison):
         inMemoryPowerup = self._inMemoryPowerups.get(interface, [])
         for pup in inMemoryPowerup:
             yield pup
         if self.store is None:
             return
+
         name = qual(interface)
-        for cable in self.store.query(
-            _PowerupConnector,
-            AND(_PowerupConnector.interface == name,
-                _PowerupConnector.item == self),
+
+        tables = (_PowerupConnector,) + tables
+        comparison = AND(_PowerupConnector.interface == name,
+                         _PowerupConnector.item == self,
+                         comparison),
+
+
+        for entries in self.store.query(
+            tables,
+            comparison,
             sort=_PowerupConnector.priority.descending):
+            cable = entries[0]
             pup = cable.powerup
             if pup is None:
                 # this powerup was probably deleted during an upgrader.
