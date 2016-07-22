@@ -350,8 +350,10 @@ class Empowered(object):
         tables = (_PowerupConnector,) + tables
         if comparison:
             comparison = AND(_PowerupConnector.interface == name,
-                         _PowerupConnector.item == self,
-                         comparison)
+                             _PowerupConnector.item == self,
+                             _PowerupConnector.powerup == tables[1].storeID,
+                             comparison
+            )
         else:
             comparison = AND(_PowerupConnector.interface == name,
                              _PowerupConnector.item == self,
