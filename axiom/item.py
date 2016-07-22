@@ -339,8 +339,6 @@ class Empowered(object):
         powerupsFor iteration, during an upgrader, or previously, will not be
         returned.
         """
-        if comparison is None:
-            comparison = AND()
         inMemoryPowerup = self._inMemoryPowerups.get(interface, [])
         for pup in inMemoryPowerup:
             yield pup
@@ -350,9 +348,14 @@ class Empowered(object):
         name = qual(interface)
 
         tables = (_PowerupConnector,) + tables
-        comparison = AND(_PowerupConnector.interface == name,
+        if comparison:
+            comparison = AND(_PowerupConnector.interface == name,
                          _PowerupConnector.item == self,
-                         comparison),
+                         comparison)
+        else:
+            comparison = AND(_PowerupConnector.interface == name,
+                             _PowerupConnector.item == self,
+                             )
 
 
         for entries in self.store.query(
