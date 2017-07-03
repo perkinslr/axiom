@@ -1,6 +1,6 @@
 # -*- test-case-name: axiomatic.test.test_axiomatic -*-
 from zope.interface import alsoProvides, noLongerProvides
-
+from twisted.python.filepath import FilePath
 import os
 import sys
 import glob
@@ -143,7 +143,7 @@ class Start(twistd.ServerOptions):
                     del args[index]
                     self.opt_reactor(shortName)
                     break
-            sys.argv[1:] = self.getArguments(self.parent.getStore(), args)
+            sys.argv[1:] = self.getArguments(type('', (object,), dict(dbdir=FilePath(self.parent.getStoreDirectory()))), args)
             self.run()
 
 
