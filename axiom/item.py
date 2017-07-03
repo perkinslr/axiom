@@ -541,34 +541,36 @@ class Item(Empowered, slotmachine._Strict, metaclass=MetaItem):
         for name, atr in self.getSchema():
             atr.prepareInsert(self, store)
 
+    @property
+    def store(self):
+        return self.__store
 
-    def store():
-        def get(self):
-            return self.__store
-        def set(self, store):
-            if self.__store is not None:
-                raise AttributeError(
-                    "Store already set - can't move between stores")
+    @store.setter
+    def store(self, store):
 
-            if store._rejectChanges:
-                raise ChangeRejected()
+        if self.__store is not None:
+            raise AttributeError(
+                "Store already set - can't move between stores")
 
-            self._schemaPrepareInsert(store)
-            self.__store = store
-            oid = self.storeID = self.store.executeSchemaSQL(
-                _schema.CREATE_OBJECT, [self.store.getTypeID(type(self))])
-            if not self.__legacy__:
-                store.objectCache.cache(oid, self)
-            if store.autocommit:
-                log.msg(interface=iaxiom.IStatEvent,
-                        name='database', stat_autocommits=1)
+        if store._rejectChanges:
+            raise ChangeRejected()
 
-                self.checkpoint()
-            else:
-                self.touch()
-            self.activate()
-            self.stored()
-        return get, set, """
+        self._schemaPrepareInsert(store)
+        self.__store = store
+        oid = self.storeID = self.store.executeSchemaSQL(
+            _schema.CREATE_OBJECT, [self.store.getTypeID(type(self))])
+        if not self.__legacy__:
+            store.objectCache.cache(oid, self)
+        if store.autocommit:
+            log.msg(interface=iaxiom.IStatEvent,
+                    name='database', stat_autocommits=1)
+
+            self.checkpoint()
+        else:
+            self.touch()
+        self.activate()
+        self.stored()
+    store.__doc__ = """
 
         A reference to a Store; when set for the first time, inserts this object
         into that store.  Cannot be set twice; once inserted, objects are
@@ -576,9 +578,6 @@ class Item(Empowered, slotmachine._Strict, metaclass=MetaItem):
         Item.
 
         """
-
-    store = property(*store())
-
 
     def __repr__(self):
         """
