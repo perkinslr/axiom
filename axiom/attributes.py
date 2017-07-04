@@ -903,7 +903,7 @@ class integer(SQLAttribute):
 class bytes(SQLAttribute):
     """
     Attribute representing a sequence of bytes; this is represented in memory
-    as a Python 'str'.
+    as a Python 'bytes'.
     """
 
     sqltype = 'BLOB'
@@ -912,14 +912,14 @@ class bytes(SQLAttribute):
         if pyval is None:
             return None
         if isinstance(pyval, str):
-            raise ConstraintError(self, "str or other byte buffer", pyval)
-        return buffer(pyval)
+            raise ConstraintError(self, "bytes or other byte buffer", pyval)
+        return (pyval)
 
 
     def outfilter(self, dbval, oself):
         if dbval is None:
             return None
-        return str(dbval)
+        return (dbval)
 
 
     @deprecated(Version("Axiom", 0, 7, 5))
